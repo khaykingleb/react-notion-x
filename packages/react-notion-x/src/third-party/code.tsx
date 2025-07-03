@@ -1,9 +1,5 @@
-import * as React from 'react'
-
-import copyToClipboard from 'clipboard-copy'
-import { CodeBlock } from 'notion-types'
-import { getBlockTitle } from 'notion-utils'
-import { highlightElement } from 'prismjs'
+// eslint-disable-next-line import/no-duplicates
+import 'prismjs'
 import 'prismjs/components/prism-clike.min.js'
 import 'prismjs/components/prism-css-extras.min.js'
 import 'prismjs/components/prism-css.min.js'
@@ -14,30 +10,52 @@ import 'prismjs/components/prism-jsx.min.js'
 import 'prismjs/components/prism-tsx.min.js'
 import 'prismjs/components/prism-typescript.min.js'
 
+import copyToClipboard from 'clipboard-copy'
+import { type CodeBlock } from 'notion-types'
+import { getBlockTitle } from 'notion-utils'
+// eslint-disable-next-line import/no-duplicates, no-duplicate-imports
+import prism from 'prismjs'
+import React from 'react'
+
 import { Text } from '../components/text'
 import { useNotionContext } from '../context'
 import CopyIcon from '../icons/copy'
 import { cs } from '../utils'
 
-export const Code: React.FC<{
+export function Code({
+  block,
+  defaultLanguage = 'typescript',
+  className
+}: {
   block: CodeBlock
   defaultLanguage?: string
   className?: string
-}> = ({ block, defaultLanguage = 'typescript', className }) => {
+}) {
   const [isCopied, setIsCopied] = React.useState(false)
-  const copyTimeout = React.useRef<number>()
+  const copyTimeout = React.useRef<number | undefined>(undefined)
   const { recordMap } = useNotionContext()
   const content = getBlockTitle(block, recordMap)
-  const language = (
-    block.properties?.language?.[0]?.[0] || defaultLanguage
-  ).toLowerCase()
+  const language = (() => {
+    const languageNotion = (
+      block.properties?.language?.[0]?.[0] || defaultLanguage
+    ).toLowerCase()
+
+    switch (languageNotion) {
+      case 'c++':
+        return 'cpp'
+      case 'f#':
+        return 'fsharp'
+      default:
+        return languageNotion
+    }
+  })()
   const caption = block.properties.caption
 
-  const codeRef = React.useRef()
+  const codeRef = React.useRef<HTMLElement | null>(null)
   React.useEffect(() => {
     if (codeRef.current) {
       try {
-        highlightElement(codeRef.current)
+        prism.highlightElement(codeRef.current)
       } catch (err) {
         console.warn('prismjs highlight error', err)
       }
@@ -45,12 +63,12 @@ export const Code: React.FC<{
   }, [codeRef])
 
   const onClickCopyToClipboard = React.useCallback(() => {
-    copyToClipboard(content)
+    void copyToClipboard(content)
     setIsCopied(true)
 
     if (copyTimeout.current) {
       clearTimeout(copyTimeout.current)
-      copyTimeout.current = null
+      copyTimeout.current = undefined
     }
 
     copyTimeout.current = setTimeout(() => {
@@ -66,7 +84,11 @@ export const Code: React.FC<{
 
   return (
     <>
-      <pre className={cs('notion-code', className)}>
+      <pre
+        className={cs('notion-code', `language-${language}`, className)}
+        // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+        tabIndex={0}
+      >
         <div className='notion-code-copy'>
           {copyButton}
 
@@ -77,7 +99,7 @@ export const Code: React.FC<{
           )}
         </div>
 
-        <code className={`language-${language}`} ref={codeRef}>
+        <code className={`language-${language}`} ref={codeRef as any}>
           {content}
         </code>
       </pre>

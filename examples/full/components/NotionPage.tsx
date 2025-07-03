@@ -1,11 +1,9 @@
-import * as React from 'react'
 import dynamic from 'next/dynamic'
 import Head from 'next/head'
 // import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-
-import { ExtendedRecordMap } from 'notion-types'
+import { type ExtendedRecordMap } from 'notion-types'
 import { getPageTitle } from 'notion-utils'
 import { NotionRenderer } from 'react-notion-x'
 import TweetEmbed from 'react-tweet-embed'
@@ -20,36 +18,67 @@ const Code = dynamic(() =>
   import('react-notion-x/build/third-party/code').then(async (m) => {
     // additional prism syntaxes
     await Promise.all([
+      // @ts-expect-error ignore no prisma types
       import('prismjs/components/prism-markup-templating.js'),
+      // @ts-expect-error ignore no prisma types
       import('prismjs/components/prism-markup.js'),
+      // @ts-expect-error ignore no prisma types
       import('prismjs/components/prism-bash.js'),
+      // @ts-expect-error ignore no prisma types
       import('prismjs/components/prism-c.js'),
+      // @ts-expect-error ignore no prisma types
       import('prismjs/components/prism-cpp.js'),
+      // @ts-expect-error ignore no prisma types
       import('prismjs/components/prism-csharp.js'),
+      // @ts-expect-error ignore no prisma types
       import('prismjs/components/prism-docker.js'),
+      // @ts-expect-error ignore no prisma types
       import('prismjs/components/prism-java.js'),
+      // @ts-expect-error ignore no prisma types
       import('prismjs/components/prism-js-templates.js'),
+      // @ts-expect-error ignore no prisma types
       import('prismjs/components/prism-coffeescript.js'),
+      // @ts-expect-error ignore no prisma types
       import('prismjs/components/prism-diff.js'),
+      // @ts-expect-error ignore no prisma types
       import('prismjs/components/prism-git.js'),
+      // @ts-expect-error ignore no prisma types
       import('prismjs/components/prism-go.js'),
+      // @ts-expect-error ignore no prisma types
       import('prismjs/components/prism-graphql.js'),
+      // @ts-expect-error ignore no prisma types
       import('prismjs/components/prism-handlebars.js'),
+      // @ts-expect-error ignore no prisma types
       import('prismjs/components/prism-less.js'),
+      // @ts-expect-error ignore no prisma types
       import('prismjs/components/prism-makefile.js'),
+      // @ts-expect-error ignore no prisma types
       import('prismjs/components/prism-markdown.js'),
+      // @ts-expect-error ignore no prisma types
       import('prismjs/components/prism-objectivec.js'),
+      // @ts-expect-error ignore no prisma types
       import('prismjs/components/prism-ocaml.js'),
+      // @ts-expect-error ignore no prisma types
       import('prismjs/components/prism-python.js'),
+      // @ts-expect-error ignore no prisma types
       import('prismjs/components/prism-reason.js'),
+      // @ts-expect-error ignore no prisma types
       import('prismjs/components/prism-rust.js'),
+      // @ts-expect-error ignore no prisma types
       import('prismjs/components/prism-sass.js'),
+      // @ts-expect-error ignore no prisma types
       import('prismjs/components/prism-scss.js'),
+      // @ts-expect-error ignore no prisma types
       import('prismjs/components/prism-solidity.js'),
+      // @ts-expect-error ignore no prisma types
       import('prismjs/components/prism-sql.js'),
+      // @ts-expect-error ignore no prisma types
       import('prismjs/components/prism-stylus.js'),
+      // @ts-expect-error ignore no prisma types
       import('prismjs/components/prism-swift.js'),
+      // @ts-expect-error ignore no prisma types
       import('prismjs/components/prism-wasm.js'),
+      // @ts-expect-error ignore no prisma types
       import('prismjs/components/prism-yaml.js')
     ])
     return m.Code
@@ -76,11 +105,11 @@ const Modal = dynamic(
   }
 )
 
-const Tweet = ({ id }: { id: string }) => {
+function Tweet({ id }: { id: string }) {
   return <TweetEmbed tweetId={id} />
 }
 
-export const NotionPage = ({
+export function NotionPage({
   recordMap,
   previewImagesEnabled,
   rootPageId,
@@ -90,7 +119,7 @@ export const NotionPage = ({
   previewImagesEnabled?: boolean
   rootPageId?: string
   rootDomain?: string
-}) => {
+}) {
   const router = useRouter()
 
   if (router.isFallback) {
@@ -101,13 +130,12 @@ export const NotionPage = ({
     return null
   }
 
-  const title = getPageTitle(recordMap)
-  console.log(title, recordMap)
+  const title = getPageTitle(recordMap) ?? ''
 
   // useful for debugging from the dev console
   if (typeof window !== 'undefined') {
     const keys = Object.keys(recordMap?.block || {})
-    const block = recordMap?.block?.[keys[0]]?.value
+    const block = recordMap?.block?.[keys[0]!]?.value
     const g = window as any
     g.recordMap = recordMap
     g.block = block
@@ -154,7 +182,7 @@ export const NotionPage = ({
         previewImages={previewImagesEnabled}
         components={{
           // NOTE (transitive-bullshit 3/12/2023): I'm disabling next/image for this repo for now because the amount of traffic started costing me hundreds of dollars a month in Vercel image optimization costs. I'll probably re-enable it in the future if I can find a better solution.
-          // nextImage: Image,
+          // nextLegacyImage: Image,
           nextLink: Link,
           Code,
           Collection,
