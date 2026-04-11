@@ -76,8 +76,10 @@ export const getPageImageUrls = (
       return images
     })
     .filter(Boolean)
-    .map(({ block, url }) => mapImageUrl(url, block))
-    .filter(Boolean)
+    .flatMap(({ block, url }) => {
+      const mapped = mapImageUrl(url, block)
+      return mapped != null ? [mapped] : []
+    })
 
   return Array.from(new Set(imageUrls))
 }

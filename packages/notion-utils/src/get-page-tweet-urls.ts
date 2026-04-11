@@ -21,7 +21,7 @@ export const getPageTweetUrls = (
         }
       }
     })
-    .filter(Boolean)
+    .filter((url): url is string => url != null)
 
   return Array.from(new Set(tweetUrls))
 }
