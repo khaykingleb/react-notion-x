@@ -15,7 +15,7 @@ import { Loading } from './Loading'
 // -----------------------------------------------------------------------------
 
 const Code = dynamic(() =>
-  import('react-notion-x/build/third-party/code').then(async (m) => {
+  import('react-notion-x/third-party/code').then(async (m) => {
     // additional prism syntaxes
     await Promise.all([
       // @ts-expect-error ignore no prisma types
@@ -85,21 +85,19 @@ const Code = dynamic(() =>
   })
 )
 const Collection = dynamic(() =>
-  import('react-notion-x/build/third-party/collection').then(
-    (m) => m.Collection
-  )
+  import('react-notion-x/third-party/collection').then((m) => m.Collection)
 )
 const Equation = dynamic(() =>
-  import('react-notion-x/build/third-party/equation').then((m) => m.Equation)
+  import('react-notion-x/third-party/equation').then((m) => m.Equation)
 )
 const Pdf = dynamic(
-  () => import('react-notion-x/build/third-party/pdf').then((m) => m.Pdf),
+  () => import('react-notion-x/third-party/pdf').then((m) => m.Pdf),
   {
     ssr: false
   }
 )
 const Modal = dynamic(
-  () => import('react-notion-x/build/third-party/modal').then((m) => m.Modal),
+  () => import('react-notion-x/third-party/modal').then((m) => m.Modal),
   {
     ssr: false
   }
@@ -113,14 +111,40 @@ export function NotionPage({
   recordMap,
   previewImagesEnabled,
   rootPageId,
-  rootDomain
+  rootDomain,
+  enabled = true
 }: {
   recordMap: ExtendedRecordMap
   previewImagesEnabled?: boolean
   rootPageId?: string
   rootDomain?: string
+  enabled?: boolean
 }) {
   const router = useRouter()
+
+  if (!enabled) {
+    return (
+      <div style={{ padding: '20px' }}>
+        <p>
+          Hey 👋 I've disabled the public demo for subpages for{' '}
+          <a
+            href='https://github.com/NotionX/react-notion-x'
+            target='_blank'
+            rel='noopener noreferrer'
+          >
+            react-notion-x
+          </a>{' '}
+          for now because my Vercel bill keeps increasing due to people abusing
+          the demo.
+        </p>
+
+        <p>
+          You can still run the demos locally by checking out the git repo and
+          following the instructions in the readme.
+        </p>
+      </div>
+    )
+  }
 
   if (router.isFallback) {
     return <Loading />
