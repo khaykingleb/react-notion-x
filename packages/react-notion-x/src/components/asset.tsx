@@ -274,14 +274,15 @@ export function Asset({
       }
     }
   } else if (block.type === 'image') {
-    // console.log('image', block)
     // TODO: kind of a hack for now. New file.notion.so images aren't signed correctly
-    if (source.includes('file.notion.so')) {
+    // Gifs need to use their original file URLs and not the source prop (see #663)
+    if (!source.includes('.gif') && source.includes('file.notion.so')) {
       source = block.properties?.source?.[0]?.[0]
     }
     const src = mapImageUrl(source, block as Block)
+    const altText = getTextContent(block.properties?.alt_text)
     const caption = getTextContent(block.properties?.caption)
-    const alt = caption || 'notion image'
+    const alt = altText || caption || 'notion image'
 
     content = (
       <LazyImage

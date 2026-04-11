@@ -1,19 +1,18 @@
 {
   "name": "notion-x-example-full",
-  "version": "7.4.3",
+  "version": "7.10.0",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "deploy": "vercel deploy",
-    "test": "run-s test:*",
-    "test:lint": "eslint ."
+    "deploy": "vercel deploy"
   },
   "dependencies": {
     "@notionhq/client": "catalog:",
     "classnames": "catalog:",
+    "katex": "catalog:",
     "ky": "catalog:",
     "lqip-modern": "catalog:",
     "next": "catalog:",
